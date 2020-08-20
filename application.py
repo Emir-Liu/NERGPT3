@@ -24,8 +24,11 @@ ner_table = pd.DataFrame(columns=['values', 'tags'])
 primer = '''Jim bought 300 shares of Acme Corp. in 2006.
 [("Jim", "person"), ("Acme Corp.", "organization"), ("2006", "year")]
 
-I like to drink coffee in the morning with my breakfast.
-[("I", "person"), ("coffee", "drink"), ("morning", "time"), ("breakfast", "food")]
+I like to drink coffee in the
+[("I", "person"), ("coffee", "drink")]
+
+morning with my breakfast.
+[("morning", "time"), ("breakfast", "food")]
 
 Since I like dinosaurs, I think Jurassic Park is one of my favorite movies of all time.
 [("I", "person"), ("dinosaurs", "animals"), ("Jurassic Park", "movie"), ("all time", "time")]
@@ -33,31 +36,46 @@ Since I like dinosaurs, I think Jurassic Park is one of my favorite movies of al
 Mark Zuckerberg is one of the founders of Facebook, a company from the United States.
 [("Mark Zuckerberg", "person"), ("Facebook", "company"), ("United States", "location")]
 
-Amazon tells employees in New York and New Jersey to work from home to prevent coronavirus spread.
-[("Amazon", "company"), ("New York", "location"), ("New Jersey", "location"), ("coronavirus", "disease")]
+Amazon tells employees in New York and New Jersey
+[("Amazon", "company"), ("New York", "location"), ("New Jersey", "location")]
 
-European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices
+to work from home to prevent coronavirus spread
+[("coronavirus", "disease")]
+
+European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the
 [("European authorities", "people"), ("Google", "company"), ("$5.1 billion", "money")]
+
+either a garlicky soy sauce or thick spicy red pepper sauce, Soban excels in all things seafood
+[("soy sauce", "condiment"), ("spicy red pepper sauce", "condiment"), ("Soban", restaurant"), ("seafood", "food")]
+
+Bannon, 66, was arrested on a yacht Thursday off the eastern
+[("Bannon", "person"), ("66", "age"), ("Thursday", "date")]
 
 '''
 
 
-def get_ner(query, temp):
-    # max_tokens = min(len(query.split()) * 2, 512)
-    max_tokens = 512
-    print("Max tokens: " + str(max_tokens))
-
+def get_response(sentence, temp):
     response = openai.Completion.create(
       engine="davinci",
-      prompt=primer+query,
-      max_tokens=max_tokens,
+      prompt=primer + sentence,
+      max_tokens=256,
       temperature=temp,
       stop="]"
     )
     string = response['choices'][0]['text'].strip() + ']'
-    print(string)
     pairs = ast.literal_eval(string)
-    print(pairs)
+    return pairs
+
+
+def get_ner(text, temp):
+    # split text by sentences to process long text w/o errors
+    sentences = text.split(". ")
+    pairs = []
+    for sentence in sentences:
+        print(sentence + '.')
+        result = get_response(sentence + '.', temp)
+        print(result)
+        pairs.extend(result)
 
     df = pd.DataFrame(columns=['values', 'tags'])
     df['values'] = [x for (x, y) in pairs]
