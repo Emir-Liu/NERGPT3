@@ -1,0 +1,11 @@
+.env
+.idea/.gitignore
+.idea/GPT3NER.iml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
