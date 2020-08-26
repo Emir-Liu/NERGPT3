@@ -9,6 +9,7 @@ import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import plotly.express as px
 from dash.dependencies import Input, Output, State
 
 load_dotenv(dotenv_path=Path("..") / ".env")
@@ -116,8 +117,43 @@ def get_ner(text, temp, labels):
     return df
 
 
+def display_output_tab():
+    content = dbc.Card(
+        dbc.CardBody(
+            [
+                html.Br(),
+                dash_table.DataTable(
+                    id='output-table',
+                    columns=[{"name": i, "id": i} for i in ner_table.columns],
+                    data=ner_table.to_dict('records'),
+                    editable=True,
+                    export_format='csv',
+                    export_headers="display",
+                    row_deletable=True
+                )
+            ]
+        ),
+        className="mt-3",
+    )
+    return content
+
+
+def display_analysis_tab():
+    fig = px.histogram(ner_table, x="tags")
+    content = dbc.Card(
+        dbc.CardBody(
+            [
+                html.Br(),
+                dcc.Graph(figure=fig),
+            ]
+        ),
+        className="mt-3",
+    )
+    return content
+
+
 @app.callback(
-    Output("output", "children"),
+    Output("extract-output", "children"),
     [Input("extract-btn", "n_clicks")],
     [State("textarea", "value"), State("temp-slider", "value"), State("label-input", "value")]
 )
@@ -136,15 +172,17 @@ def extract_button(n_clicks, text, temp, labels):
             if labels != '':
                 labels = labels.replace(', ', ',').split(',')
                 ner_table = ner_table[ner_table['tags'].isin(labels)]
-            return dash_table.DataTable(
-                id='live-table',
-                columns=[{"name": i, "id": i} for i in ner_table.columns],
-                data=ner_table.to_dict('records'),
-                editable=True,
-                export_format='csv',
-                export_headers="display",
-                row_deletable=True
-            ),
+            return [
+                dbc.Tabs(
+                    [
+                        dbc.Tab(label="Output", tab_id='tab-1'),
+                        dbc.Tab(label="Analysis", tab_id='tab-2'),
+                    ],
+                    id='tabs',
+                    active_tab="tab-1"
+                ),
+                html.Div(id="content"),
+            ]
         except Exception as e:
             print(e)
             return html.Div("There was an error handling your request. Please try again.")
@@ -155,6 +193,32 @@ def extract_button(n_clicks, text, temp, labels):
     [Input('temp-slider', 'value')])
 def update_slider(value):
     return html.H3('Temperature: {}'.format(value))
+
+
+@app.callback(Output("content", "children"), [Input("tabs", "active_tab")])
+def switch_tab(tab_id):
+    if tab_id == "tab-1":
+        return display_output_tab()
+    elif tab_id == "tab-2":
+        return display_analysis_tab()
+    return html.P("This shouldn't ever be displayed...")
+
+
+@app.callback(
+    Output("output-table", "children"),
+    [Input("output-table", "data_previous")],
+    [State("output-table", "data")],
+)
+def update_anomaly_table(prev, curr):
+    if prev is None:
+        dash.exceptions.PreventUpdate()
+    else:
+        removed = list(
+            set([i["values"] for i in prev])
+            - set([i["values"] for i in curr])
+        )[0]
+        global ner_table
+        ner_table = ner_table[ner_table['values'] != removed]
 
 
 app.layout = html.Div(
@@ -202,14 +266,10 @@ app.layout = html.Div(
                 width=6
             ),
             dbc.Col(
-                children=[
-                    html.Br(),
-                    html.H3("Output"),
-                    dbc.Spinner(
-                        html.Div(id='output'),
-                        spinner_style={"width": "3rem", "height": "3rem"}
-                    )
-                ],
+                dbc.Spinner(
+                    html.Div(id='extract-output'),
+                    spinner_style={"width": "3rem", "height": "3rem"}
+                ),
                 width=6
             )
         ]),

@@ -7,3 +7,4 @@ dash-html-components~=1.0.3
 dash-table~=4.8.1
 pathlib2~=2.3.5
 python-dotenv~=0.12.0
+plotly~=4.4.1
