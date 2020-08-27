@@ -76,11 +76,11 @@ def parse_contents(contents, filename):
             upload_text = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
         elif 'xls' in filename:
             upload_text = pd.read_excel(io.BytesIO(decoded))
+        else:
+            return dbc.Alert('Please upload a CSV or Excel file.', color="danger")
     except Exception as e:
         print(e)
-        return html.Div([
-            'There was an error processing this file. Please upload a CSV or Excel file.'
-        ])
+        return dbc.Alert('There was an error processing this file. Please upload a CSV or Excel file.', color="danger")
 
     return html.Div([
         html.H5(filename),
@@ -135,11 +135,13 @@ def display_upload_tab():
                         'borderStyle': 'dashed',
                         'borderRadius': '5px',
                         'textAlign': 'center',
-                        'margin': '10px'
                     },
                     multiple=False
                 ),
-                html.Div(id='output-data-upload'),
+                dbc.Spinner(
+                    html.Div(id='output-data-upload'),
+                    spinner_style={"width": "3rem", "height": "3rem"}
+                ),
             ]
         ),
         className="card border-primary mb-3",
@@ -191,7 +193,7 @@ def display_analysis_tab():
 def extract_button(n_clicks, temp, labels):
     global ner_table
     if n_clicks is None:
-        return "Please input text or upload file to begin."
+        return dbc.Alert("Please input text or upload file to begin.", color="primary")
     else:
         print(n_clicks)
         print(temp)
@@ -216,7 +218,7 @@ def extract_button(n_clicks, temp, labels):
             ]
         except Exception as e:
             print(e)
-            return html.Div("There was an error handling your request. Please try again.")
+            return dbc.Alert('There was an error handling your request. Please try again.', color="danger")
 
 
 @app.callback(
