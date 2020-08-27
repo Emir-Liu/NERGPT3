@@ -15,13 +15,14 @@ import plotly.express as px
 from dash.dependencies import Input, Output, State
 
 load_dotenv(dotenv_path=Path("..") / ".env")
-openai.api_key = os.getenv("API-KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.COSMO])
 application = app.server
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 app.config["suppress_callback_exceptions"] = True
+app.title = 'Named Entity Recognition'
 
 ner_table = pd.DataFrame(columns=['values', 'tags'])
 upload_text = pd.DataFrame()
