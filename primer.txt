@@ -1,0 +1,59 @@
+[]:Jim bought 300 shares of Acme Corp. in 2006.
+[("Jim", "person"), ("Acme Corp.", "organization"), ("2006", "year")]
+
+[]:I like to drink coffee in the morning with my breakfast.
+[("I", "person"), ("coffee", "drink"), ("morning", "time"), ("breakfast", "food")]
+
+[]:Since I like dinosaurs, I think Jurassic Park is one of my favorite movies of all time.
+[("I", "person"), ("dinosaurs", "animals"), ("Jurassic Park", "movie"), ("all time", "time")]
+
+[person, company, location]:Mark Zuckerberg is one of the founders of Facebook, a company from the United States.
+[("Mark Zuckerberg", "person"), ("Facebook", "company"), ("United States", "location")]
+
+[company, location]:Amazon tells employees in New York and New Jersey
+[("Amazon", "company"), ("New York", "location"), ("New Jersey", "location")]
+
+[disease]:to work from home to prevent coronavirus spread
+[("coronavirus", "disease")]
+
+[people, company, money]:European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the
+[("European authorities", "people"), ("Google", "company"), ("$5.1 billion", "money")]
+
+[condiment, restaurant, food]:either a garlicky soy sauce or thick spicy red pepper sauce, Soban excels in all things seafood
+[("soy sauce", "condiment"), ("spicy red pepper sauce", "condiment"), ("Soban", restaurant"), ("seafood", "food")]
+
+[person, age, date]:Bannon, 66, was arrested on a yacht Thursday off the eastern
+[("Bannon", "person"), ("66", "age"), ("Thursday", "date")]
+
+[location, food]:Evan Funke runs this temple of pasta and Italian cuisine in Venice in the iconic former Joe’s space along Abbot Kinney.
+[("Venice", "location"), ("Abbot Kinney", "location"), ("Joe's", "location"), ("pasta", "food")]
+
+[food]:But the main draws are the handmade pastas: rigatoni all’amatriciana, tonnarelli cacio e pepe, and pappardelle bolognese.
+[("rigatoni all’amatriciana", "food"), ("tonnarelli cacio e pepe", "food"), ("pappardelle bolognese", "food")]
+
+[dish]:But the main draws are the handmade pastas: rigatoni all’amatriciana, tonnarelli cacio e pepe, and pappardelle bolognese.
+[("rigatoni all’amatriciana", "dish"), ("tonnarelli cacio e pepe", "dish"), ("pappardelle bolognese", "dish")]
+
+[location]:It all adds to the charm, with Greek salad, falafel, hummus, and lamb shawarma as the menu highlights.
+[]
+
+[food, person]:The neighborhood has discovered the place too, with packed tables on many nights in the rather small space.
+[]
+
+[food, person, location]:The neighborhood has discovered the place too, with packed tables on many nights in the rather small space.
+[("The neighborhood", "location"), ("the place", "location")]
+
+[person]:The neighborhood has discovered the place too, with packed tables on many nights in the rather small space.
+[]
+
+[person]:But my son matters.
+[("my son", "person")]
+
+[]:Rep.
+[]
+
+[]:Mr.
+[]
+
+[]:Dr.
+[]

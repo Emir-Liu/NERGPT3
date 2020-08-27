@@ -28,67 +28,7 @@ upload_text = pd.DataFrame()
 upload_tab = True
 upload_column = ''
 textarea_string = ''
-primer = '''[]:Jim bought 300 shares of Acme Corp. in 2006.
-[("Jim", "person"), ("Acme Corp.", "organization"), ("2006", "year")]
-
-[]:I like to drink coffee in the morning with my breakfast.
-[("I", "person"), ("coffee", "drink"), ("morning", "time"), ("breakfast", "food")]
-
-[]:Since I like dinosaurs, I think Jurassic Park is one of my favorite movies of all time.
-[("I", "person"), ("dinosaurs", "animals"), ("Jurassic Park", "movie"), ("all time", "time")]
-
-[person, company, location]:Mark Zuckerberg is one of the founders of Facebook, a company from the United States.
-[("Mark Zuckerberg", "person"), ("Facebook", "company"), ("United States", "location")]
-
-[company, location]:Amazon tells employees in New York and New Jersey
-[("Amazon", "company"), ("New York", "location"), ("New Jersey", "location")]
-
-[disease]:to work from home to prevent coronavirus spread
-[("coronavirus", "disease")]
-
-[people, company, money]:European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the
-[("European authorities", "people"), ("Google", "company"), ("$5.1 billion", "money")]
-
-[condiment, restaurant, food]:either a garlicky soy sauce or thick spicy red pepper sauce, Soban excels in all things seafood
-[("soy sauce", "condiment"), ("spicy red pepper sauce", "condiment"), ("Soban", restaurant"), ("seafood", "food")]
-
-[person, age, date]:Bannon, 66, was arrested on a yacht Thursday off the eastern
-[("Bannon", "person"), ("66", "age"), ("Thursday", "date")]
-
-[location, food]:Evan Funke runs this temple of pasta and Italian cuisine in Venice in the iconic former Joe’s space along Abbot Kinney.
-[("Venice", "location"), ("Abbot Kinney", "location"), ("Joe's", "location"), ("pasta", "food")]
-
-[food]:But the main draws are the handmade pastas: rigatoni all’amatriciana, tonnarelli cacio e pepe, and pappardelle bolognese.
-[("rigatoni all’amatriciana", "food"), ("tonnarelli cacio e pepe", "food"), ("pappardelle bolognese", "food")]
-
-[dish]:But the main draws are the handmade pastas: rigatoni all’amatriciana, tonnarelli cacio e pepe, and pappardelle bolognese.
-[("rigatoni all’amatriciana", "dish"), ("tonnarelli cacio e pepe", "dish"), ("pappardelle bolognese", "dish")]
-
-[location]:It all adds to the charm, with Greek salad, falafel, hummus, and lamb shawarma as the menu highlights.
-[]
-
-[food, person]:The neighborhood has discovered the place too, with packed tables on many nights in the rather small space.
-[]
-
-[food, person, location]:The neighborhood has discovered the place too, with packed tables on many nights in the rather small space.
-[("The neighborhood", "location"), ("the place", "location")]
-
-[person]:The neighborhood has discovered the place too, with packed tables on many nights in the rather small space.
-[]
-
-[person]:But my son matters.
-[("my son", "person")]
-
-[]:Rep.
-[]
-
-[]:Mr.
-[]
-
-[]:Dr.
-[]
-
-'''
+primer = open('primer.txt').read()
 
 
 def get_response(input_text, temp):
@@ -160,43 +100,6 @@ def parse_contents(contents, filename):
     ])
 
 
-def display_output_tab():
-    content = dbc.Card(
-        dbc.CardBody(
-            [
-                html.Br(),
-                dash_table.DataTable(
-                    id='output-table',
-                    columns=[{"name": i, "id": i} for i in ner_table.columns],
-                    data=ner_table.to_dict('records'),
-                    editable=True,
-                    export_format='csv',
-                    export_headers="display",
-                    row_deletable=True,
-                    css=[{'selector': '.row', 'rule': 'margin: 0'}],
-                    style_table={'height': '600px', 'overflowY': 'auto', 'overflowX': 'auto'},
-                )
-            ]
-        ),
-        className="card border-primary mb-3",
-    )
-    return content
-
-
-def display_analysis_tab():
-    fig = px.histogram(ner_table, x="tags")
-    content = dbc.Card(
-        dbc.CardBody(
-            [
-                html.Br(),
-                dcc.Graph(figure=fig),
-            ]
-        ),
-        className="card border-primary mb-3",
-    )
-    return content
-
-
 def display_input_tab():
     content = dbc.Card(
         dbc.CardBody(
@@ -236,6 +139,42 @@ def display_upload_tab():
                     multiple=False
                 ),
                 html.Div(id='output-data-upload'),
+            ]
+        ),
+        className="card border-primary mb-3",
+    )
+    return content
+
+
+def display_output_tab():
+    if ner_table.empty:
+        out = dbc.Alert("No tags found! Please adjust temperature and try again.", color="danger")
+    else:
+        out = dash_table.DataTable(
+                    id='output-table',
+                    columns=[{"name": i, "id": i} for i in ner_table.columns],
+                    data=ner_table.to_dict('records'),
+                    editable=True,
+                    export_format='csv',
+                    export_headers="display",
+                    row_deletable=True,
+                    css=[{'selector': '.row', 'rule': 'margin: 0'}],
+                    style_table={'height': '600px', 'overflowY': 'auto', 'overflowX': 'auto'},
+                )
+    content = dbc.Card(
+        dbc.CardBody([html.Br(), out]),
+        className="card border-primary mb-3",
+    )
+    return content
+
+
+def display_analysis_tab():
+    fig = px.histogram(ner_table, x="tags")
+    content = dbc.Card(
+        dbc.CardBody(
+            [
+                html.Br(),
+                dcc.Graph(figure=fig),
             ]
         ),
         className="card border-primary mb-3",
