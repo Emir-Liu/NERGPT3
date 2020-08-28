@@ -1,4 +1,4 @@
-# Multilingual Named Entity Recognition :bookmark_tabs::globe_with_meridians:
+# Multilingual Named Entity Recognition :bookmark_tabs: :globe_with_meridians:
 https://ner-gpt3.azurewebsites.net/ <br>
 Extract entities from multilingual text using named entity recognition (NER) powered by OpenAI's GPT-3. NER labels
 sequences of words in a text which are the names of things, such as person and company names. Due to the black-box
