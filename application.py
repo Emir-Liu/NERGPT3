@@ -47,9 +47,13 @@ def get_response(input_text, temp):
         stop="]",
     )
     string = response["choices"][0]["text"].strip() + "]"
-    print(string)
-    pairs = ast.literal_eval(string)
-    return pairs
+    try:
+        pairs = ast.literal_eval(string)
+        return [x for x in pairs if len(x) == 2]
+    except Exception as e:
+        print("Unexpected output: " + string)
+        print(e)
+        return []
 
 
 def get_ner(temp, labels):
@@ -61,13 +65,14 @@ def get_ner(temp, labels):
     if upload_tab:
         sentences = upload_txt[upload_column]
     else:
-        text = txtarea_str.replace("“", "").replace("”", "").replace('"', "")
+        text = txtarea_str.replace("“", "").replace("”", "").replace('"', "").replace("\n", " ")
         sentences = text.split(". ")
     pairs = []
     for sentence in sentences:
         input_text = "[" + labels + "]:" + sentence + "."
         print("\n" + input_text)
         result = get_response(input_text, temp)
+        print(result)
         pairs.extend(result)
 
     df = pd.DataFrame(columns=["values", "tags"])
