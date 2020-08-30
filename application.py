@@ -40,7 +40,7 @@ def get_response(input_text, temp):
     :return: list of tuples of (value, tag)
     """
     response = openai.Completion.create(
-        engine="davinci",
+        engine="curie",
         prompt=primer + input_text,
         max_tokens=256,
         temperature=temp,
