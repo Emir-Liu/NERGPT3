@@ -23,7 +23,7 @@ application = app.server
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 app.config["suppress_callback_exceptions"] = True
-app.title = "Named Entity Recognition"
+app.title = "Algomo | Named entity recognition"
 
 ner_table = pd.DataFrame(columns=["values", "tags"])
 upload_txt = pd.DataFrame()
