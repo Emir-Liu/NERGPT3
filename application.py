@@ -115,14 +115,15 @@ def parse_contents(contents, filename):
                     columns=[{"name": i, "id": i} for i in upload_txt.columns],
                     page_action="none",
                     style_table={
-                        "height": "300px",
+                        "height": "100px",
                         "overflowY": "auto",
                         "overflowX": "auto",
                     },
                     css=[{"selector": ".row", "rule": "margin: 0"}],
                 )
             ),
-        ]
+        ],
+        style={"height": 150}
     )
 
 
@@ -133,7 +134,7 @@ def display_input_tab():
                 dbc.Textarea(
                     id="textarea",
                     placeholder="Input your text for NER",
-                    style={"width": "100%", "height": 300},
+                    style={"width": "100%", "height": 150},
                 ),
             ]
         ),
@@ -152,8 +153,8 @@ def display_upload_tab():
                     children=upload_div,
                     style={
                         "width": "100%",
-                        "height": "60px",
-                        "lineHeight": "60px",
+                        "height": "30px",
+                        "lineHeight": "30px",
                         "borderWidth": "1px",
                         "borderStyle": "dashed",
                         "borderRadius": "5px",
@@ -173,7 +174,7 @@ def display_upload_tab():
 
 
 def display_output_tab():
-    table_style = {"height": "600px", "overflowY": "auto", "overflowX": "auto"}
+    table_style = {"height": "300px", "overflowY": "auto", "overflowX": "auto"}
     if ner_table.empty:
         out = dbc.Alert(
             "No tags found! Please adjust temperature and try again.", color="danger",
@@ -197,7 +198,7 @@ def display_output_tab():
 
 
 def display_analysis_tab():
-    fig = px.histogram(ner_table, x="tags")
+    fig = px.histogram(ner_table, x="tags", height=300)
     content = dbc.Card(
         dbc.CardBody([html.Br(), dcc.Graph(figure=fig)]),
         className="card border-primary mb-3",
@@ -209,20 +210,18 @@ def display_left_col():
     x1 = "Separate w/ commas, leave blank for automatic label generation"
     x2 = "https://cdn.openai.com/API/logo-assets/powered-by-openai-dark.png"
     return [
-        html.Br(),
-        html.H3("Tags"),
+        html.H4("Tags", style={"font-weight": "bold", "font-style": "italic"}),
         dbc.Input(id="label-input", placeholder=x1, type="text",),
         html.Br(),
         html.Div(id="temp-output"),
         dcc.Slider(id="temp-slider", min=0, max=1, step=0.05, value=0.5),
-        html.H3("Text"),
+        html.H4("Text", style={"font-weight": "bold", "font-style": "italic"}),
         dbc.Tabs(
             [dbc.Tab(label="Input", id="tab-0"), dbc.Tab(label="Upload", id="tab-1")],
             id="input-tabs",
             active_tab="tab-0",
         ),
         html.Div(id="input-content"),
-        html.Br(),
         dbc.Button(
             "EXTRACT", id="extract-btn", block=True, color="primary", className="mr-1"
         ),
@@ -233,7 +232,6 @@ def display_left_col():
 
 def display_right_col():
     return [
-        html.Br(),
         dbc.Spinner(
             html.Div(id="extract-output"),
             spinner_style={"width": "3rem", "height": "3rem"},
@@ -269,7 +267,7 @@ def switch_output_tab(tab_id):
     Output("temp-output", "children"), [Input("temp-slider", "value")],
 )
 def update_slider(value):
-    return html.H3("Temperature: {}".format(value))
+    return html.H4("Temperature: {}".format(value), style={"font-weight": "bold", "font-style": "italic"})
 
 
 @app.callback(
@@ -357,36 +355,51 @@ def extract_button(n_clicks, temp, labels):
 
 app.layout = html.Div(
     children=[
-        html.H1("Multilingual Named Entity Recognition"),
         html.Div(
-            "Extract entities from text using named entity recognition (NER). "
-            "NER labels sequences of words in a text which are the names of "
-            "things, such as person and company names."
-        ),
-        html.Div(
-            "Temperature controls randomness. Lowering results in less random "
-            "completions. As temperature approaches zero, the model will "
-            "become deterministic and repetitive. Given the task, we do not "
-            'want a very "creative" model, as this creates issues in the '
-            "output. A temperature of around 0.5 works decently well. Feel "
-            "free to experiment!"
-        ),
-        html.Hr(),
-        dbc.Row(
             children=[
-                dbc.Col(children=display_left_col(), width=6,),
-                dbc.Col(children=display_right_col(), width=6,),
-            ]
-        ),
-        html.Div(id="dropdown-output", style={"display": "none"}),
-        html.Div(id="textarea-output", style={"display": "none"}),
+                html.Img(src="assets/algomo-logo-blue-trans.gif", height=80),
+                html.Img(src="assets/algomo-text-blue-trans.gif", height=40),
+                html.Br(),
+                html.H2("Multilingual Named Entity Recognition", style={"font-weight": "bold"}),
+                html.Div(
+                    "Extract entities from text using named entity recognition (NER). "
+                    "NER labels sequences of words in a text which are the names of "
+                    "things, such as person and company names."
+                ),
+                html.Div(
+                    "Temperature controls randomness. Lowering results in less random "
+                    "completions. As temperature approaches zero, the model will "
+                    "become deterministic and repetitive. Given the task, we do not "
+                    'want a very "creative" model, as this creates issues in the '
+                    "output. A temperature of around 0.5 works decently well. Feel "
+                    "free to experiment!"
+                ),
+                html.Hr(),
+                dbc.Row(
+                    children=[
+                        dbc.Col(children=display_left_col(), width=6,),
+                        dbc.Col(children=display_right_col(), width=6,),
+                    ]
+                ),
+                html.Div(id="dropdown-output", style={"display": "none"}),
+                html.Div(id="textarea-output", style={"display": "none"}),
+            ],
+            style={
+                "margin-left": "5%",
+                "margin-right": "5%",
+                "margin-top": "5%"
+            },
+        )
     ],
     style={
-        "margin-left": "5%",
-        "margin-right": "5%",
-        "margin-top": "5%",
-        "margin-bottom": "5%",
-    },
+        "background-image": "linear-gradient(270deg,rgba(232,233,255,0),rgba(60,70,251,.18))",
+        "background-repeat": "no-repeat",
+        "background-position": "center",
+        "background-size": "cover",
+        "position": "fixed",
+        "min-height": "100%",
+        "min-width": "100%"
+    }
 )
 
 
